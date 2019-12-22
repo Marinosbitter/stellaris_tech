@@ -6,24 +6,7 @@
         <script src="/d3/d3.min.js"></script>
         <script src="/js/functions.js"></script>
         <script>
-            var patterns = [
-                { "needle" : /(\t)/, "replace" : "" },
-                { "needle" : /(.?#.*)/, "replace" : "" },
-                { "needle" : /=/, "replace" : ":" },
-                { "needle" : /(.*) = {/, "replace" : "\"$1\" : {" }
-            ];
-
-            var jsonString = loadFile('/data_source/v1/common/technology/00_apocalypse_tech.txt');
-
-            for(i = 0; i < patterns.length; i++){
-                console.info(RegExp(patterns[i].needle, 'g'));
-                console.info(patterns[i].replace);
-
-                jsonString = jsonString.replace(RegExp(patterns[i].needle, 'g'), patterns[i].replace);
-                
-                console.info(jsonString);
-            }
-            console.info(jsonString);
+            
         </script>
     </body>
 </html>
