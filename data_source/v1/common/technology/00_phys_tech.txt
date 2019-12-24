@@ -170,7 +170,7 @@ tech_archeology_lab_ancrel = {
 				has_modifier = "curator_insight"
 			}
 		}
-	}
+}
 
 	prereqfor_desc = {
 		component = {
