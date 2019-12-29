@@ -93,5 +93,6 @@ function getJsonStringFromData(){
 }
 
 function getJsonDataFeed(){
+    getJsonStringFromData();
     return jsonData;
 }

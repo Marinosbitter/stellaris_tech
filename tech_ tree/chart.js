@@ -4,7 +4,7 @@ var margin = {top: 10, right: 10, bottom: 10, left: 10},
     height = 480 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
-var svg = d3.select("#chart").append("svg")
+var svg = d3.select("#chartholder").append("svg")
 .attr("width", width + margin.left + margin.right)
 .attr("height", height + margin.top + margin.bottom)
 .append("g")
@@ -21,72 +21,70 @@ var sankey = d3.sankey()
 .size([width, height]);
 
 // load the data
-d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/data_sankey.json", function(error, graph) {
+var graph = dataFeedToInput(getJsonDataFeed());
+//d3.json(jsonTechData, function(error, graph) {
+// Constructs a new Sankey generator with the default settings.
+sankey
+    .nodes(graph.nodes)
+    .links(graph.links)
+    .layout(2);
 
-    // Constructs a new Sankey generator with the default settings.
-    sankey
-        .nodes(graph.nodes)
-        .links(graph.links)
-        .layout(1);
+// add in the links
+var link = svg.append("g")
+.selectAll(".link")
+.data(graph.links)
+.enter()
+.append("path")
+.attr("class", "link")
+.attr("d", sankey.link() )
+.style("stroke-width", function(d) { return Math.max(1, d.dy); })
+.sort(function(a, b) { return b.dy - a.dy; });
 
-    // add in the links
-    var link = svg.append("g")
-    .selectAll(".link")
-    .data(graph.links)
-    .enter()
-    .append("path")
-    .attr("class", "link")
-    .attr("d", sankey.link() )
-    .style("stroke-width", function(d) { return Math.max(1, d.dy); })
-    .sort(function(a, b) { return b.dy - a.dy; });
+// add in the nodes
+var node = svg.append("g")
+.selectAll(".node")
+.data(graph.nodes)
+.enter().append("g")
+.attr("class", "node")
+.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+.call(d3.drag()
+      .subject(function(d) { return d; })
+      .on("start", function() { this.parentNode.appendChild(this); })
+      .on("drag", dragmove));
 
-    // add in the nodes
-    var node = svg.append("g")
-    .selectAll(".node")
-    .data(graph.nodes)
-    .enter().append("g")
-    .attr("class", "node")
-    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-    .call(d3.drag()
-          .subject(function(d) { return d; })
-          .on("start", function() { this.parentNode.appendChild(this); })
-          .on("drag", dragmove));
+// add the rectangles for the nodes
+node
+    .append("rect")
+    .attr("height", function(d) { return d.dy; })
+    .attr("width", sankey.nodeWidth())
+    .style("fill", function(d) { return d.color = color(d.name.replace(/ .*/, "")); })
+    .style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
+// Add hover text
+    .append("title")
+    .text(function(d) { return d.name + "\n" + "There is " + d.value + " stuff in this node"; });
 
-    // add the rectangles for the nodes
-    node
-        .append("rect")
-        .attr("height", function(d) { return d.dy; })
-        .attr("width", sankey.nodeWidth())
-        .style("fill", function(d) { return d.color = color(d.name.replace(/ .*/, "")); })
-        .style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
-    // Add hover text
-        .append("title")
-        .text(function(d) { return d.name + "\n" + "There is " + d.value + " stuff in this node"; });
+// add in the title for the nodes
+node
+    .append("text")
+    .attr("x", -6)
+    .attr("y", function(d) { return d.dy / 2; })
+    .attr("dy", ".35em")
+    .attr("text-anchor", "end")
+    .attr("transform", null)
+    .text(function(d) { return d.name; })
+    .filter(function(d) { return d.x < width / 2; })
+    .attr("x", 6 + sankey.nodeWidth())
+    .attr("text-anchor", "start");
 
-    // add in the title for the nodes
-    node
-        .append("text")
-        .attr("x", -6)
-        .attr("y", function(d) { return d.dy / 2; })
-        .attr("dy", ".35em")
-        .attr("text-anchor", "end")
-        .attr("transform", null)
-        .text(function(d) { return d.name; })
-        .filter(function(d) { return d.x < width / 2; })
-        .attr("x", 6 + sankey.nodeWidth())
-        .attr("text-anchor", "start");
-
-    // the function for moving the nodes
-    function dragmove(d) {
-        d3.select(this)
-            .attr("transform",
-                  "translate("
-                  + d.x + ","
-                  + (d.y = Math.max(
-            0, Math.min(height - d.dy, d3.event.y))
-                    ) + ")");
-        sankey.relayout();
-        link.attr("d", sankey.link() );
-    }
-
-});
+// the function for moving the nodes
+function dragmove(d) {
+    d3.select(this)
+        .attr("transform",
+              "translate("
+              + d.x + ","
+              + (d.y = Math.max(
+        0, Math.min(height - d.dy, d3.event.y))
+                ) + ")");
+    sankey.relayout();
+    link.attr("d", sankey.link() );
+}
