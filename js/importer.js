@@ -94,5 +94,5 @@ function getJsonStringFromData(){
 
 function getJsonDataFeed(){
     getJsonStringFromData();
-    console.info(jsonData);
+    return jsonData;
 }
