@@ -11,15 +11,39 @@
  * Text Domain:       stellaris-game-mechanics
  * Domain Path:       /languages
  */
+add_shortcode( 'stellaris-game-mechanics', 'sgm_shortcode_function' );
+function sgm_shortcode_function( $atts ) {
+    $atts = shortcode_atts( array(
+        //        'foo' => 'no foo',
+        //        'baz' => 'default baz'
+    ), $atts, 'stellaris-game-mechanics' );
 
-//<html>
-//    <head>
-//    </head>
-//    <body>
-//        <script src="/d3/d3.min.js"></script>
-//        <script src="/js/functions.js"></script>
-//        <script>
-//            
-//        </script>
-//    </body>
-//</html>
+    $returnHTML = "Horizon event";
+
+    return $returnHTML;
+}
+
+class SGM {
+    public function __construct(){        
+        define( 'SGMPATH', plugin_dir_path( __FILE__ ) . "/dist/" );
+        define( 'SGMURL', plugin_dir_url( __FILE__ ) . "/dist/" );
+
+        $this->setup_automatic_updater();
+        foreach (glob(plugin_dir_path( __FILE__ ) . 'dist/classes/*.php') as $filename)
+        {
+            require_once($filename);
+        }
+    }
+    private function setup_automatic_updater(){
+        require plugin_dir_path( __FILE__ ) . 'dist/frameworks/plugin-update-checker/plugin-update-checker.php';
+        $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+            'https://github.com/Marinosbitter/stellaris_tech/',
+            __FILE__,
+            'stellaris-game-mechanics'
+        );
+
+        //Optional: Set the branch that contains the stable release.
+        $myUpdateChecker->setBranch('master');
+    }
+}
+$sgm = new SGM();
