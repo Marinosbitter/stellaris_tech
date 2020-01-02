@@ -1,22 +1,22 @@
 <?php
 /**
- * Plugin Name:       Stellaris game mechanics
- * Plugin URI:        https://code.marinosbitter.nl/plugins/stellaris-game-mechanics/
+ * Plugin Name:       Stellaris game-mechanics
+ * Plugin URI:        https://code.marinosbitter.nl/plugins/stellaris-mechanics/
  * Description:       Handle the basics with this plugin.
  * Version:           1.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Marinosbitter
  * Author URI:        https://marinosbitter.nl/
- * Text Domain:       stellaris-game-mechanics
+ * Text Domain:       stellaris_mechanics
  * Domain Path:       /languages
  */
-add_shortcode( 'stellaris-game-mechanics', 'sgm_shortcode_function' );
+add_shortcode( 'stellaris-mechanics', 'sgm_shortcode_function' );
 function sgm_shortcode_function( $atts ) {
     $atts = shortcode_atts( array(
         //        'foo' => 'no foo',
         //        'baz' => 'default baz'
-    ), $atts, 'stellaris-game-mechanics' );
+    ), $atts, 'stellaris-mechanics' );
 
     $returnHTML = "Horizon event";
 
@@ -39,7 +39,7 @@ class SGM {
         $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
             'https://github.com/Marinosbitter/stellaris_tech/',
             __FILE__,
-            'stellaris-game-mechanics'
+            'stellaris-mechanics'
         );
 
         //Optional: Set the branch that contains the stable release.
