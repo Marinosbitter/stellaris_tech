@@ -1,0 +1,22 @@
+{
+  "name": "stellaris-game-mechanics",
+  "version": "1.0.0",
+  "description": "A technology tree for stellaris",
+  "main": "/dist/js/index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Marinosbitter/stellaris_tech.git"
+  },
+  "author": "Marinosbitter",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Marinosbitter/stellaris_tech/issues"
+  },
+  "homepage": "https://github.com/Marinosbitter/stellaris_tech#readme",
+  "dependencies": {
+    "jomini": "^0.2.11"
+  }
+}
