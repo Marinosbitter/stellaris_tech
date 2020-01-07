@@ -65,9 +65,16 @@
             }
             for(a=0;a<techJSON.length;a++){
                 for(b=0;b<techJSON[a].children.length;b++){
+                    techJSON[a].children[b].prerequisites_string = "";
+                    for(c=0;c<techJSON[a].children[b].prerequisites_names.length;c++){
+                        if(c>0){techJSON[a].children[b].prerequisites_string += ",";}
+                        techJSON[a].children[b].prerequisites_string += techJSON[a].children[b].prerequisites_names[c].name;
+                    } console.info(techJSON[a].children[b].prerequisites_string);
                     techJSON.push(techJSON[a].children[b]);
                 }
             }
+            console.log("----------------------------Output----------------------------")
+            console.log(JSON.stringify(techJSON));
             console.info(techJSON);
         }
     </script>
