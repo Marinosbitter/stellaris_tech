@@ -144,7 +144,38 @@
                 "post_type",
                 "taxonomy"
             ],
-            "elements": "",
+            "elements": [
+                "featured_image"
+            ],
+            "min": "",
+            "max": "",
+            "return_format": "object"
+        },
+        {
+            "key": "field_5e15c18e122e0",
+            "label": "Children",
+            "name": "children",
+            "type": "relationship",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "sgm_tech"
+            ],
+            "taxonomy": "",
+            "filters": [
+                "search",
+                "post_type",
+                "taxonomy"
+            ],
+            "elements": [
+                "featured_image"
+            ],
             "min": "",
             "max": "",
             "return_format": "object"
@@ -245,5 +276,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1578403684
+    "modified": 1578489553
 }

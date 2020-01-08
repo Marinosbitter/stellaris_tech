@@ -29,7 +29,7 @@
             "https://raw.githubusercontent.com/turanar/stellaris-technology/master/output/society.json"
         ];
         var inputJson = [], techJSON = [];
-        
+
         for(i=0;i<techJSONFiles.length;i++){
             readJSON(techJSONFiles[i]);
         }
@@ -69,7 +69,12 @@
                     for(c=0;c<techJSON[a].children[b].prerequisites_names.length;c++){
                         if(c>0){techJSON[a].children[b].prerequisites_string += ",";}
                         techJSON[a].children[b].prerequisites_string += techJSON[a].children[b].prerequisites_names[c].name;
-                    } console.info(techJSON[a].children[b].prerequisites_string);
+                    }
+                    techJSON[a].children[b].children_string = "";
+                    for(d=0;d<techJSON[a].children[b].children.length;d++){
+                        if(d>0){techJSON[a].children[b].children_string += ",";}
+                        techJSON[a].children[b].children_string += techJSON[a].children[b].children[d].name;
+                    }
                     techJSON.push(techJSON[a].children[b]);
                 }
             }

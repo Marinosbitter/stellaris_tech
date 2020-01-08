@@ -11,18 +11,6 @@
  * Text Domain:       stellaris_mechanics
  * Domain Path:       /languages
  */
-add_shortcode( 'stellaris-mechanics', 'sgm_shortcode_function' );
-function sgm_shortcode_function( $atts ) {
-    $atts = shortcode_atts( array(
-        //        'foo' => 'no foo',
-        //        'baz' => 'default baz'
-    ), $atts, 'stellaris-mechanics' );
-
-    $returnHTML = "Horizon event";
-
-    return $returnHTML;
-}
-
 class SGM {
     public function __construct(){        
         define( 'SGMPATH', plugin_dir_path( __FILE__ ) . "/dist/" );
