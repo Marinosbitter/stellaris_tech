@@ -3,7 +3,7 @@
  * Plugin Name:       Stellaris game-mechanics
  * Plugin URI:        https://code.marinosbitter.nl/plugins/stellaris-mechanics/
  * Description:       Handle the basics with this plugin.
- * Version:           1.0
+ * Version:           1.1
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Marinosbitter
