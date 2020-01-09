@@ -29,19 +29,29 @@ foreach($techs as $tech){
         "name" => $tech->post_title,
         "children" => array()
     );
+    array_push($data['children'], haveYouCheckedTheChildren($tech));
+}
+function haveYouCheckedTheChildren($tech){
+    $childArray = array();
+    
     $children = get_field('children', $tech->ID);
-    //    if($tech->){
-
-    //    }
-    print_r($children);
-    array_push($data['children'], $pushedTech);
+    if(!empty($children)){
+        foreach($children as $child){
+            array_push($childArray, haveYouCheckedTheChildren($child));
+        }
+    }
+    $techArray = array(
+        "name" => $tech->post_title,
+        "children" => $childArray
+    );
+    return $techArray;
 }
 $data = json_encode($data);
 ?>
 <div id="chartHolder"></div>
 <script>
     // set the dimensions and margins of the graph
-    var width = 932
+    var width = 1920
     var radius = width / 2 // radius of the dendrogram
 
     // read json data
