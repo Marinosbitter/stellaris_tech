@@ -33,7 +33,6 @@ foreach($techs as $tech){
     //    if($tech->){
 
     //    }
-//        print_r($tech->ID);
     print_r($children);
     array_push($data['children'], $pushedTech);
 }
