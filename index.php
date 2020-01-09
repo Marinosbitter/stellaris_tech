@@ -3,7 +3,7 @@
  * Plugin Name:       Stellaris game-mechanics
  * Plugin URI:        https://code.marinosbitter.nl/plugins/stellaris-mechanics/
  * Description:       Handle the basics with this plugin.
- * Version:           1.0
+ * Version:           1.1
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Marinosbitter
@@ -11,18 +11,6 @@
  * Text Domain:       stellaris_mechanics
  * Domain Path:       /languages
  */
-add_shortcode( 'stellaris-mechanics', 'sgm_shortcode_function' );
-function sgm_shortcode_function( $atts ) {
-    $atts = shortcode_atts( array(
-        //        'foo' => 'no foo',
-        //        'baz' => 'default baz'
-    ), $atts, 'stellaris-mechanics' );
-
-    $returnHTML = "Horizon event";
-
-    return $returnHTML;
-}
-
 class SGM {
     public function __construct(){        
         define( 'SGMPATH', plugin_dir_path( __FILE__ ) . "/dist/" );
