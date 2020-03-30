@@ -1,16 +1,16 @@
 <?php
-ob_start();
 // WP_Query arguments
 $args = array(
     'post_type' => array( 'sgm_tech' ),
     'posts_per_page' => -1,
-    'meta_query'	=> array(
-        'relation'		=> 'AND',
-        array(
-            'key'	 	=> 'is_start_tech',
-            'value'	  	=> true,
-        ),
-    )
+    's' => 'Kinetic Artillery',
+    //    'meta_query'	=> array(
+    //        'relation'		=> 'AND',
+    //        array(
+    //            'key'	 	=> 'is_start_tech',
+    //            'value'	  	=> true,
+    //        ),
+    //    )
 );
 
 // The Query
@@ -23,104 +23,89 @@ if ( $query_tech->have_posts() ) {
 
 // Restore original Post Data
 wp_reset_postdata();
-$data = array("name" => "Technology Tree","children"=>array());
-foreach($techs as $tech){
-    $pushedTech = array(
-        "name" => $tech->post_title,
-        "children" => array()
-    );
-    array_push($data['children'], haveYouCheckedTheChildren($tech));
-}
-function haveYouCheckedTheChildren($tech){
-    $childArray = array();
-    
-    $children = get_field('children', $tech->ID);
-    if(!empty($children)){
-        foreach($children as $child){
-            array_push($childArray, haveYouCheckedTheChildren($child));
+
+function getPreReqs($tech){
+    $preReqs = get_field('prerequisites', $tech->ID);
+    $returnArray = array();
+
+    if(!empty($preReqs)){
+        foreach($preReqs as $preReq){
+            $returnArray[$preReq->post_title] = getPreReqs($preReq);
         }
+        return $returnArray;
     }
-    $techArray = array(
-        "name" => $tech->post_title,
-        "children" => $childArray
-    );
-    return $techArray;
 }
-$data = json_encode($data);
+foreach($techs as $tech){
+    print_r(getPreReqs($tech));
+}
+$jsonArray = array(
+    "children" => array(
+        "name" => "boss1",
+        "children" => array(
+            "name"=> "CEO",  
+        ),
+    )
+);
+$jsonString = json_encode($jsonArray);
 ?>
-<div id="chartHolder"></div>
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
 <script>
     // set the dimensions and margins of the graph
-    var width = 1920
+    var width = 460
+    var height = 460
     var radius = width / 2 // radius of the dendrogram
 
+    // append the svg object to the body of the page
+    var svg = d3.select("#my_dataviz")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g")
+    .attr("transform", "translate(" + radius + "," + radius + ")");
+
     // read json data
-    var data = <?php echo $data; ?>;
+    // Create the cluster layout:
+    var cluster = d3.cluster()
+    .size([360, radius - 60]);  // 360 means whole circle. radius - 60 means 60 px of margin around dendrogram
 
-    function buildChart() {
-        const root = tree(d3.hierarchy(data)
-                          .sort((a, b) => d3.ascending(a.data.name, b.data.name)));
+    // Give the data to this cluster layout:
+    var root = d3.hierarchy(<?php echo $jsonString; ?>, function(d) {
+        return d.children;
+    });
+    cluster(root);
 
-        const svg = d3.create("svg")
-        .style("max-width", "100%")
-        .style("height", "auto")
-        .style("font", "10px sans-serif")
-        .style("margin", "5px");
+    // Features of the links between nodes:
+    var linksGenerator = d3.linkRadial()
+    .angle(function(d) { return d.x / 180 * Math.PI; })
+    .radius(function(d) { return d.y; });
 
-        const link = svg.append("g")
-        .attr("fill", "none")
-        .attr("stroke", "#555")
-        .attr("stroke-opacity", 0.4)
-        .attr("stroke-width", 1.5)
-        .selectAll("path")
+    // Add the links between nodes:
+    svg.selectAll('path')
         .data(root.links())
-        .join("path")
-        .attr("d", d3.linkRadial()
-              .angle(d => d.x)
-              .radius(d => d.y));
+        .enter()
+        .append('path')
+        .attr("d", linksGenerator)
+        .style("fill", 'none')
+        .attr("stroke", '#ccc')
 
-        const node = svg.append("g")
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-width", 3)
-        .selectAll("g")
-        .data(root.descendants().reverse())
-        .join("g")
-        .attr("transform", d => `
-rotate(${d.x * 180 / Math.PI - 90})
-translate(${d.y},0)
-`);
 
-        node.append("circle")
-            .attr("fill", d => d.children ? "#555" : "#999")
-            .attr("r", 2.5);
-
-        node.append("text")
-            .attr("dy", "0.31em")
-            .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
-            .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
-            .attr("transform", d => d.x >= Math.PI ? "rotate(180)" : null)
-            .text(d => d.data.name)
-            .clone(true).lower()
-            .attr("stroke", "white");
-
-        return svg.node();
-    }
-    tree = d3.tree()
-        .size([2 * Math.PI, radius])
-        .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth)
-
-    function autoBox() {
-        const {x, y, width, height} = this.getBBox();
-        return [x, y, width, height];
-    }
-
-    var chart = buildChart();
-    d3.select("#chartHolder")
-        .append(buildChart)
-        .attr("viewBox", autoBox);
-
+    // Add a circle for each node.
+    svg.selectAll("g")
+        .data(root.descendants())
+        .enter()
+        .append("g")
+        .attr("transform", function(d) {
+        return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")";
+    })
+        .append("circle")
+        .attr("r", 7)
+        .style("fill", "#69b3a2")
+        .attr("stroke", "black")
+        .style("stroke-width", 2)
+    
+    console.info(svg.selectAll("g"));
 </script>
-<?php 
-$output = ob_get_contents();
-ob_end_clean();
-return $output;
